@@ -69,7 +69,7 @@ def plot_categories( df , cat , target , **kwargs ):
 
 
 def plot_correlation_map( df ):
-    corr = titanic.corr()
+    corr = df.corr()
     _ , ax = plt.subplots( figsize =( 12 , 10 ) )
     cmap = sns.diverging_palette( 220 , 10 , as_cmap = True )
     _ = sns.heatmap(
@@ -119,3 +119,11 @@ print ('Datasets:' , 'full:' , full.shape , 'titanic:' , titanic.shape)
 # %%
 titanic.head()
 titanic.describe()
+
+# %%
+plot_correlation_map( titanic )
+
+
+# %%
+# Plot distributions of Age of passangers who survived or did not survive
+plot_distribution( titanic , var = 'Age' , target = 'Survived' , row = 'Sex' )
