@@ -15,11 +15,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC, LinearSVC
-from sklearn.ensemble import RandomForestClassifier , GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
 # Modelling Helpers
-from sklearn.preprocessing import Imputer , Normalizer , scale
-from sklearn.cross_validation import train_test_split , StratifiedKFold
+from sklearn.preprocessing import Imputer, Normalizer, scale
+from sklearn.cross_validation import train_test_split, StratifiedKFold
 from sklearn.feature_selection import RFECV
 
 # Visualisation
@@ -35,7 +35,7 @@ sns.set_style( 'white' )
 pylab.rcParams[ 'figure.figsize' ] = 8 , 6
 
 # %%
-
+# Load data
 train = pd.read_csv("titanic_kaggle/input/train.csv")
 test = pd.read_csv("titanic_kaggle/input/test.csv")
 
@@ -45,7 +45,8 @@ def plot_histograms( df , variables , n_rows , n_cols ):
     for i, var_name in enumerate( variables ):
         ax=fig.add_subplot( n_rows , n_cols , i+1 )
         df[ var_name ].hist( bins=10 , ax=ax )
-        ax.set_title( 'Skew: ' + str( round( float( df[ var_name ].skew() ) , ) ) ) # + ' ' + var_name ) #var_name+" Distribution")
+        ax.set_title( 'Skew: ' +
+            str( round( float( df[ var_name ].skew() ) , ) ) ) # + ' ' + var_name ) #var_name+" Distribution")
         ax.set_xticklabels( [] , visible=False )
         ax.set_yticklabels( [] , visible=False )
     fig.tight_layout()  # Improves appearance a bit.
@@ -246,3 +247,57 @@ family.head()
 
 full_X = pd.concat( [ imputed , embarked , cabin , sex ] , axis=1 )
 full_X.head()
+
+# %%
+# Create datasets
+train_valid_X = full_X[ 0:891 ]
+train_valid_y = titanic.Survived #titanic is already of size 891
+test_X = full_X[ 891: ]
+train_X , valid_X , train_y , valid_y = train_test_split( train_valid_X , train_valid_y , train_size = .7 )
+
+print ("Full X: {}\nTrain X: {}\nValid X: {}\nTrain Y: {}\nValid Y: {}\nTest X: {}".format(
+        full_X.shape , train_X.shape , valid_X.shape , train_y.shape , valid_y.shape , test_X.shape))
+
+# %%
+plot_variable_importance(train_X, train_y)
+
+
+# %%
+# potential models, keep only 1, comment others
+# Random Forests Model
+# model = RandomForestClassifier(n_estimators=100)
+# Support Vector Machines
+# model = SVC()
+# Gradient Boosting Classifier
+# model = GradientBoostingClassifier()
+# K-nearest neighbours
+# model = KNeighborsClassifier(n_neighbors = 3)
+# Gaussian Naive Bayes
+# model = GaussianNB()
+# Logistic Regression
+model = LogisticRegression()
+# Train the selected model
+model.fit( train_X , train_y )
+# check accuracy
+print (model.score( train_X , train_y ) , model.score( valid_X , valid_y ))
+
+
+#%%
+# find Feature importance
+# this is only for decision tree
+#plot_model_var_imp(model, train_X, train_y)
+
+
+# %%
+# automatically select the optimal number of features and visualize this
+rfecv = RFECV( estimator = model , step = 1 , cv = StratifiedKFold( train_y , 2 ) , scoring = 'accuracy' )
+rfecv.fit( train_X , train_y )
+print (rfecv.score( train_X , train_y ) , rfecv.score( valid_X , valid_y ))
+print( "Optimal number of features : %d" % rfecv.n_features_ )
+
+# Plot number of features VS. cross-validation scores
+plt.figure()
+plt.xlabel( "Number of features selected" )
+plt.ylabel( "Cross validation score (nb of correct classifications)" )
+plt.plot( range( 1 , len( rfecv.grid_scores_ ) + 1 ) , rfecv.grid_scores_ )
+plt.show()
