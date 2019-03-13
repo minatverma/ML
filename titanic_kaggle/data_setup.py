@@ -127,3 +127,11 @@ plot_correlation_map( titanic )
 # %%
 # Plot distributions of Age of passangers who survived or did not survive
 plot_distribution( titanic , var = 'Age' , target = 'Survived' , row = 'Sex' )
+
+# %%
+# plot the distributions of Fare of passangers who survived or did not
+plot_distribution( titanic , var = 'Fare' , target = 'Survived')
+
+# %%
+# Plot survival rate by Embarked
+plot_categories( titanic , cat = 'Embarked' , target = 'Survived' )
