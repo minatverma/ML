@@ -301,3 +301,14 @@ plt.xlabel( "Number of features selected" )
 plt.ylabel( "Cross validation score (nb of correct classifications)" )
 plt.plot( range( 1 , len( rfecv.grid_scores_ ) + 1 ) , rfecv.grid_scores_ )
 plt.show()
+
+# %%
+# publishing and final output
+
+# test_Y = model.predict( test_X )
+# passenger_id = full[891:].PassengerId
+# test = pd.DataFrame( { 'PassengerId': passenger_id , 'Survived': test_Y } )
+# test.shape
+# test.head()
+# test.to_csv( 'titanic_pred.csv' , index = False )
+
