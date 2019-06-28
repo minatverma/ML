@@ -273,9 +273,9 @@ plot_variable_importance(train_X, train_y)
 # K-nearest neighbours
 # model = KNeighborsClassifier(n_neighbors = 3)
 # Gaussian Naive Bayes
-# model = GaussianNB()
+model = GaussianNB()
 # Logistic Regression
-model = LogisticRegression()
+# model = LogisticRegression()
 # Train the selected model
 model.fit( train_X , train_y )
 # check accuracy
